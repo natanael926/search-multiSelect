@@ -1,0 +1,21 @@
+.div-search {width:  600px;}
+
+.div-input-search{ border:  solid 1px #d8d8d8; width:  100%; height:  21px; padding: 5px;  }
+
+.div-input-search:hover { border:  solid 1px #8181F7; cursor:  text; }
+
+.div-input-search ul { display: inline; padding: 0 1em 0 0; }
+
+.div-input-search ul li { display:inline;  font-family: monospace, Georgia, Serif; font-size: 11px; cursor: default;}
+
+/* Estilo de label */
+.label-search { background:  #eeeeee; padding: 3px 19px 3px 3px; border-radius: 3px; -moz-border-radius: 3px; border: 1px solid #c3bcbc;  position: relative; margin: 3px 0 3px 5px;  }
+.search-close {display: block; position: absolute; right: 5px; top: 6px; width: 8px; height: 9px; font-size: 1px; background: url('img/chosen-sprite.png') right top no-repeat; }
+.search-close:hover { background-position: right -9px; }
+	
+/* Estilo de body */
+.div-body-search { width:  100%;  border:  solid 1px #d8d8d8; border-top: none; padding: 5px; font-size: 12px;}
+.div-body-search ul { list-style-type: none;  }
+.div-body-search li { padding-top: 5px; padding-bottom: 5px; }
+
+.label-form-search {position: relative; left: 20px; font-size: 13px; color:  #424242}
