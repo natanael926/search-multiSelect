@@ -8,12 +8,15 @@ define([
 	"dijit/form/DateTextBox",
 	"dijit/form/Select",
 	"dijit/form/CheckBox",
-	"dojo/data/ObjectStore"
-], function(dom, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore) {
-	return{
+	"dojo/data/ObjectStore",
+	"dojo/store/Memory"
+], function(dom, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore, Memory) {
+	 return{
 
 		 id: 1,
+		 prueba: null,
 		 parametrosFormulario: null, // todos los parametros del formularios
+		 labelObj: new Memory({data: [], idProperty: "id"}),
 
 		 /**
 		 * @param parametros ; los parametros de todos los input del formulario
@@ -24,18 +27,16 @@ define([
 		 },
 
 		// Creamos los label a mostrar en el div del buscador
-		createLabel: function(label) {
+		createLabel: function(label, id) {
 			var domUl = dom.byId('ul-label-search'); //obtenemos el nodo de ul
-			var domLi = domConstruct.create('li', {'class': 'label-search', id: 'label-search-' + this.id}, domUl); // creamos el li
+			var domLi = domConstruct.create('li', {'class': 'label-search', id:  id}, domUl); // creamos el li
 			domConstruct.create('span', {innerHTML: label}, domLi);
 
-			query(domConstruct.create('a', {href: '#', 'class': 'search-close', rel: this.id }, domLi))
+			query(domConstruct.create('a', {href: '#', 'class': 'search-close', rel: id }, domLi))
 				.on("click", function(e){ 
-					var domEliminar = dom.byId('label-search-' + e.target.rel);
-					domConstruct.destroy(domEliminar);
-				});
-
-			this.id++;
+					var objCheck = dijit.byId('check-' + e.target.rel);
+					objCheck.setChecked(false);
+			});
 		},
 
 		createDom: function(){
@@ -57,17 +58,20 @@ define([
 						var divInput = domConstruct.create('div', {id: item.id}, liForm);
 						domConstruct.create('input', { id: item.id + 'check'}, divInput);
 						
+						this.prueba = item; // creamos una variable de entorno global 
+						console.log(item);
 						new CheckBox({
-							name: 'check-' + this.id,
-							value: 'check-' + this.id,
+							name: 'check-' + item.id,
+							value: 'check-' + item.id,
+							id: 'check-' + item.id,
 							checked: false,
 							onChange:  lang.hitch(this, function(d){ 
-								console.log(a);
+								console.log(this.prueba);
 								if(d){
-									console.log(this);
-									// this.createLabel('no');
+									this.createLabel(this.prueba.label, this.prueba.id);
 								}else{
-
+									var domEliminar = dom.byId(this.prueba.id);
+									domConstruct.destroy(domEliminar);
 								}
 							})
 						}, item.id + 'check');				
@@ -80,17 +84,39 @@ define([
 						new DateTextBox({}, item.id + 'a').startup();
 						new DateTextBox({}, item.id + 'b').startup();
 					break;
-
 					case 'select':
 						var liForm  = domConstruct.create('li', {}, ulFromSearch);
 						domConstruct.create('div', {'class': 'label-form-search', innerHTML: item.label}, liForm);
-						domConstruct.create('input', {type: "checkbox", id: item.id + 'check', 'data-dojo-type': "dijit/form/CheckBox"}, liForm);
-						domConstruct.create('div', {id: item.id}, liForm);
+						var divInput = domConstruct.create('div', {}, liForm);
+						domConstruct.create('input', { id: item.id + 'check'}, divInput);
+						domConstruct.create('div', {id: item.id}, divInput);
+
+						this.prueba  = item; // creamos una variable de entorno global 
+						console.log(item);
+						new CheckBox({
+							name: 'check-' + item.id,
+							value: 'check-' + item.id,
+							id: 'check-' + item.id,
+							checked: false,
+							onChange:  lang.hitch(this, function(evt){ 
+								
+								console.log(this.prueba);
+
+								if(evt){
+									this.createLabel( 'asasasa',  this.prueba.id);
+								}else{
+									var domEliminar = dom.byId(this.prueba.id);
+									domConstruct.destroy(domEliminar);
+								}
+							})
+						}, item.id + 'check');	
 						
 						var select = new ObjectStore({ objectStore: item.date });
 						new Select({ store: select }, item.id).startup();
 					break;
 				}
+
+				this.id++;
 			}));
 		}
 	};
