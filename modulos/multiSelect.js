@@ -122,7 +122,13 @@ define([
 						domConstruct.create('span', {innerHTML: 'hasta'}, divInput);
 						domConstruct.create('input', {id: item.id + 'b'}, divInput);
 
-						new DateTextBox({}, item.id + 'a').startup();
+						new DateTextBox({
+							objectClass: this,
+							
+							onChange: lang.hitch(this, function(evt){
+								console.log(this);
+							})
+						}, item.id + 'a').startup();
 						new DateTextBox({}, item.id + 'b').startup();
 					break;
 					case 'select':
