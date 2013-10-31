@@ -21,16 +21,14 @@
 		<script>
 			require(['modulos/multiSelect', 'dojo/store/Memory', 'dojo/domReady!'], function(multiSelect, Memory){
 
-				var store = new Memory({
-    					data: [
-      						{ id: "1", label: "Prueba 1" },
-      						{ id: "2", label: "Prueba 2" }
-    					]
-  				});
+				var datosTipoSelect = [
+					{id: "hola", label: "Prueba 1"},
+      					{id: "mundo", label: "Prueba 2"}
+				]
 
 				var search = { form: [
-						{type: 'multiDate', label: 'Fecha de filtro', id: 'dateFiltro', data: {}},
-						{type: 'select', label: 'Tipo Select', id: 'anio', date: store}
+						{type: 'multiDate', label: 'Fecha de filtro',  columna: 'fecha', id: 'dateFiltro', data: {}},
+						{type: 'select', label: 'Tipo Select', columna: 'tipo', id: 'anio', data: datosTipoSelect}
 					]};
 
 				multiSelect.init(search);

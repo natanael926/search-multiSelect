@@ -36,15 +36,7 @@ define([
 			var domLi = domConstruct.create('li', {'class': 'label-search', id:  itemInput.id}, domUl); // creamos el li
 			domConstruct.create('span', {innerHTML: itemInput.label}, domLi);
 
-			var valor = registry.byId(itemInput.id);
-			console.log('-----------');
-			console.log(valor.getValue());
-
-			if(itemInput.type == 'multiDate') {
-				this.datosRequert.add({id: itemInput.id, values: {valor1: 1, valor2: 2}});
-			} else {
-				this.datosRequert.add({id: itemInput.id, values: {valor1: 1}});
-			}
+			this.prepararDatosRequest(itemInput);
 
 			query(domConstruct.create('a', {href: '#', 'class': 'search-close', rel: itemInput.id }, domLi))
 				.on("click", function(e){ 
@@ -70,8 +62,6 @@ define([
 				itemInput: item,
 				checked: false,
 				onChange:  lang.hitch(objectCheck, function(evt){ 
-
-					console.log(this.objectClass.datosRequert);
 
 					if(evt){
 						this.objectClass.createLabel(this.itemInput);
@@ -144,17 +134,27 @@ define([
 
 						this.createCheck('check-' + item.id, item.id + 'check', item); //creacion del check
 						
-						var select = new ObjectStore({ objectStore: item.date });
+						var select = new ObjectStore({ objectStore:  new Memory({  data: item.data}) });
 						new Select({ store: select }, item.id).startup();
 					break;
 				}
 			}));
 		},
 
-		prepararDatosRequest: function() {
-			var node = dom.byId('div-input-search');
+		/**
+		* Prepara los datos para el envio de los mismo
+		*/
+		prepararDatosRequest: function(itemInput) {
+			console.log(this.datosRequert);
+			if(itemInput.type == 'multiDate') {
+				var valorA = registry.byId(itemInput.id + 'a');
+				var valorB = registry.byId(itemInput.id + 'b');
 
-			console.log(node);
+				this.datosRequert.add({id: itemInput.id, columna: itemInput.columna, type: itemInput.type, values: {fechaInicio: valorA.value, fechaFinal: valorB.value}});
+			} else {
+				var valor = registry.byId(itemInput.id);
+				this.datosRequert.add({id: itemInput.id, columna: itemInput.columna, type: itemInput.type, values: {valor: valor.value}});
+			}
 		}
 	};
 });
