@@ -12,12 +12,15 @@ define([
 	"dijit/form/CheckBox",
 	"dojo/data/ObjectStore",
 	"dojo/store/Memory",
+	"dojo/request",
 	"dojo/fx"
-], function(dom, registry, domStyle, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore, Memory, fx) {
+], function(dom, registry, domStyle, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore, Memory, request, fx) {
 	 return{
 
 		 parametrosFormulario: null, // todos los parametros del formularios
 		 datosRequert: new Memory({data: [], idProperty: "id"}),
+		 datosConsulta:  {},
+		 url: "datos.php",
 
 		 /**
 		 * @param parametros ; los parametros de todos los input del formulario
@@ -89,9 +92,8 @@ define([
 
 			// Efecto 
 			on(dom.byId('div-input-search'), 'click', function(evt){
-				console.log(dom.byId('div-body-search'));
+
 				if(evt.toElement.className == "div-input-search"){
-					
 					var styleDisplay = domStyle.get(dom.byId('div-body-search'), 'display');	
 
 					if(styleDisplay == 'none'){
@@ -122,14 +124,22 @@ define([
 						domConstruct.create('span', {innerHTML: 'hasta'}, divInput);
 						domConstruct.create('input', {id: item.id + 'b'}, divInput);
 
-						new DateTextBox({
-							objectClass: this,
-							
-							onChange: lang.hitch(this, function(evt){
-								console.log(this);
+						var dateTextBox = new DateTextBox({
+							itemInput: item,
+							onChange: lang.hitch(dateTextBox, function(evt){
+								var objCheck = dijit.byId('check-' + this.itemInput.id);
+								objCheck.setChecked(true);
 							})
 						}, item.id + 'a').startup();
-						new DateTextBox({}, item.id + 'b').startup();
+
+						var dateTextBox = new DateTextBox({
+							itemInput: item,
+							onChange: lang.hitch(dateTextBox, function(evt){
+								var objCheck = dijit.byId('check-' + this.itemInput.id);
+								objCheck.setChecked(true);
+							})
+						}, item.id + 'b').startup();
+
 					break;
 					case 'select':
 						var liForm  = domConstruct.create('li', {}, ulFromSearch);
@@ -141,7 +151,14 @@ define([
 						this.createCheck('check-' + item.id, item.id + 'check', item); //creacion del check
 						
 						var select = new ObjectStore({ objectStore:  new Memory({  data: item.data}) });
-						new Select({ store: select }, item.id).startup();
+						var selectBox = new Select({ 
+							store: select,
+							itemInput: item,
+							onChange: lang.hitch(selectBox, function(evt){
+								var objCheck = dijit.byId('check-' + this.itemInput.id);
+								objCheck.setChecked(true);
+							})
+						}, item.id).startup();
 					break;
 				}
 			}));
@@ -151,7 +168,6 @@ define([
 		* Prepara los datos para el envio de los mismo
 		*/
 		prepararDatosRequest: function(itemInput) {
-			console.log(this.datosRequert);
 			if(itemInput.type == 'multiDate') {
 				var valorA = registry.byId(itemInput.id + 'a');
 				var valorB = registry.byId(itemInput.id + 'b');
@@ -161,6 +177,20 @@ define([
 				var valor = registry.byId(itemInput.id);
 				this.datosRequert.add({id: itemInput.id, columna: itemInput.columna, type: itemInput.type, values: {valor: valor.value}});
 			}
+
+			console.log(this.url);
+
+			request.post(this.url, {
+				data: {
+					color: "blue",
+					answer: 42
+        				}, handleAs: "json",
+    			}).then(function(text) {
+    				parsedJSON=JSON.parse(text);
+        				// console.log("The server returned: " +  text);
+    			}, function(error) {
+    				console.log(error.message);
+    			});
 		}
 	};
 });
