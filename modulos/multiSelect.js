@@ -20,7 +20,8 @@ define([
 		 parametrosFormulario: null, // todos los parametros del formularios
 		 datosRequert: new Memory({data: [], idProperty: "id"}),
 		 datosConsulta:  {},
-		 url: "datos.php",
+		 parametrosPost: [], 
+		 url: "http://localhost/multi-select-dojo/datos.php",
 
 		 /**
 		 * @param parametros ; los parametros de todos los input del formulario
@@ -178,19 +179,24 @@ define([
 				this.datosRequert.add({id: itemInput.id, columna: itemInput.columna, type: itemInput.type, values: {valor: valor.value}});
 			}
 
-			console.log(this.url);
+			arrayUtil.forEach(this.datosRequert.query(), lang.hitch(this, function(dato){
+				this.parametrosPost.push({'type': dato.type, 'columna': dato.columna, 'values': dato.values});				
+			}));
+
+			// console.log(JSON.stringify(this.parametrosPost));
 
 			request.post(this.url, {
 				data: {
-					color: "blue",
-					answer: 42
+					datos: JSON.stringify(this.parametrosPost),
         				}, handleAs: "json",
-    			}).then(function(text) {
-    				parsedJSON=JSON.parse(text);
-        				// console.log("The server returned: " +  text);
-    			}, function(error) {
+    			}).then(lang.hitch(this, function(datos) {
+    				this.datosConsulta = datos;
+
+    			}), function(error) {
     				console.log(error.message);
     			});
+
+    			prueba = this;
 		}
 	};
 });
