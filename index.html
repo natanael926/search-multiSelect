@@ -16,8 +16,25 @@
 		<script src="//ajax.googleapis.com/ajax/libs/dojo/1.9.1/dojo/dojo.js"></script>
 	</head>
 	<body class="claro">
-		<div class="div-search" id="div-search"></div>
 		
+<!-- 		<div class="div-body-search"  id="div-body-search">
+			<ul id="ul-form-search">
+				<li class="label-form-search">Hoa1</li>
+				<li class="label-form-search">Hoa2</li>
+				<li class="label-form-search">Hoa3</li>
+				<li class="label-form-search">Hoa4</li>
+				<li class="label-form-search">Hoa5</li>
+				<li class="label-form-search">Hoa6</li>
+				<li class="label-form-search">Hoa7</li>
+				<li class="label-form-search">Hoa8</li>
+				<li class="label-form-search">Hoa9</li>
+				<li class="label-form-search">Hoa10</li>
+				<li class="label-form-search">Hoa11</li>
+			</ul>
+		</div> -->
+		
+		<div class="div-search" id="div-search"></div>
+
 		<script>
 			require(['modulos/multiSelect', 'dojo/store/Memory', 'dojo/domReady!'], function(multiSelect, Memory){
 
@@ -28,8 +45,13 @@
 
 				var search = { form: [
 						{type: 'multiDate', label: 'Fecha de filtro',  columna: 'fecha', id: 'dateFiltro', data: {}},
-						{type: 'select', label: 'Tipo Select', columna: 'tipo', id: 'anio', data: datosTipoSelect}
-					]};
+						{type: 'select', label: 'Tipo Select', columna: 'tipo', id: 'anio', data: datosTipoSelect},
+						{type: 'select', label: 'Tipo P2', columna: 'tipop2', id: 'p2', data: datosTipoSelect},
+						{type: 'select', label: 'Tipo P3', columna: 'tipop3', id: 'p3', data: datosTipoSelect},
+						{type: 'select', label: 'Tipo P4', columna: 'tipop4', id: 'p4', data: datosTipoSelect},
+						{type: 'select', label: 'Tipo P5', columna: 'tipop5', id: 'p5', data: datosTipoSelect},
+						{type: 'select', label: 'Tipo P6', columna: 'tipop6', id: 'p6', data: datosTipoSelect}
+				]};
 
 				multiSelect.init(search);
 				

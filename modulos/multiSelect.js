@@ -13,14 +13,15 @@ define([
 	"dojo/data/ObjectStore",
 	"dojo/store/Memory",
 	"dojo/request",
-	"dojo/fx"
-], function(dom, registry, domStyle, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore, Memory, request, fx) {
+	"dojo/fx",
+	"dojox/layout/ScrollPane"
+], function(dom, registry, domStyle, domConstruct, on, query, lang, arrayUtil, DateTextBox, Select, CheckBox, ObjectStore, Memory, request, fx, ScrollPane) {
 	 return{
 
 		 parametrosFormulario: null, // todos los parametros del formularios
 		 datosRequert: new Memory({data: [], idProperty: "id"}),
 		 datosConsulta:  {},
-		 parametrosPost: [], 
+		 parametrosPost: new Memory({data: [], idProperty: "columna"}), 
 		 url: "http://localhost/multi-select-dojo/datos.php",
 
 		 /**
@@ -85,6 +86,12 @@ define([
 		* RA -- 29/10/2013
 		*/
 		createDom: function() {
+
+			 // var scrollPane = new dojox.layout.ScrollPane({
+    //                  		orientation: "vertical",
+    //                  		style:"width:500px; height:30px; border:1px solid; overflow:hidden;"
+    //          		}, "div-body-search");
+
 			var divSearch = dom.byId("div-search");
 
 			// Creacion del div de label
@@ -106,7 +113,13 @@ define([
 			});
 
 			var divBodySearch = domConstruct.create('div', {'class': 'div-body-search', 'id': 'div-body-search'}, divSearch);
+
 			var ulFromSearch = domConstruct.create('ul', {'id': 'ul-form-search'}, divBodySearch);
+
+			// var scrollPane = new dojox.layout.ScrollPane({
+   //                  	 		orientation: "vertical",
+   //                  			 style:"width:125px; height:200px; border:1px solid; overflow:hidden;"
+   //          		 }, ulFromSearch);
 
 			// Recoremos el Json para crear los input...
 			arrayUtil.forEach(this.parametrosFormulario.form, lang.hitch(this, function(item, index) {
@@ -180,17 +193,21 @@ define([
 			}
 
 			arrayUtil.forEach(this.datosRequert.query(), lang.hitch(this, function(dato){
-				this.parametrosPost.push({'type': dato.type, 'columna': dato.columna, 'values': dato.values});				
-			}));
 
-			// console.log(JSON.stringify(this.parametrosPost));
+				if(this.parametrosPost.get(dato.columna) != true){
+					this.parametrosPost.remove(dato.columna);
+				}
+
+				this.parametrosPost.add({'type': dato.type, 'columna': dato.columna, 'values': dato.values});				
+			}));
 
 			request.post(this.url, {
 				data: {
-					datos: JSON.stringify(this.parametrosPost),
+					datos: JSON.stringify(this.parametrosPost.query()),
         				}, handleAs: "json",
     			}).then(lang.hitch(this, function(datos) {
     				this.datosConsulta = datos;
+    				console.log('aaaa');
 
     			}), function(error) {
     				console.log(error.message);
